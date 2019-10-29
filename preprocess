@@ -4,14 +4,14 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 import json_tricks as json
 from collections import OrderedDict
+from datetime import datetime
+import time
 import os
 import sys
 import multiprocessing
 import re
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-
-
 
 pd.set_option('display.max_colwidth', -1)
 sns.set(style='darkgrid')
@@ -20,6 +20,12 @@ ARTICLES = pd.read_json("dataset/articles.json")
 # TWITTER_INFLUENCERS = pd.read_json("dataset/twitter_influencers.json")
 # TWEETS = pd.read_json("dataset/tweets.json")
 
+# Convert time
+# print(time.ctime(ARTICLES['publication_timestamp']))
+# print(datetime.utcfromtimestamp(ARTICLES['publication_day']))
+# print(datetime.utcfromtimestamp(ARTICLES['publication_timestamp']).strftime('%Y-%m-%d'))
+# ARTICLES['publication_day'] = datetime.utcfromtimestamp(ARTICLES['publication_timestamp'].astype(int)).strftime('%Y-%m-%d').astype(str)
+
 print("ARTICLES.shape: ", ARTICLES.shape)
 # print(TWEETS.head())
 
@@ -27,6 +33,7 @@ print("ARTICLES.shape: ", ARTICLES.shape)
 print("Schema:\n", ARTICLES.dtypes)
 print("Number of questions,columns=", ARTICLES.shape)
 
+# Join Facebook Data
 print(ARTICLES['fb_data'].dtype)
 fb_dict = dict(ARTICLES['fb_data'])
 fb_df = pd.DataFrame(fb_dict).transpose()
@@ -43,21 +50,30 @@ ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus = ARTICLES_WITH_
 # TODO: delete ZERO VALUES of max velocity, engagement and publication_timestamp
 
 plot_velo_fb = sns.scatterplot(x=ARTICLES_WITH_FB['total_engagement_count'], y=ARTICLES_WITH_FB['max_velocity'])
-plot_velo_fb.set_title("Velocity_vs_FB_Engagement")
+plot_velo_fb.set_title("Max Velocity and FB Engagement")
 plot_velo_fb.set_xlabel("total_engagement_count")
 plot_velo_fb.set_ylabel("max_velocity")
 fig_velo_fb = plot_velo_fb.get_figure()
 fig_velo_fb.savefig("Max_Velocity_vs_FB_Engagement.png")
+
+plot_velo_fb_zoom = sns.scatterplot(x=ARTICLES_WITH_FB['total_engagement_count'], y=ARTICLES_WITH_FB['max_velocity'])
+plot_velo_fb_zoom.set_title("Max Velocity and FB Engagement")
+plot_velo_fb_zoom.set_xlabel("total_engagement_count")
+plot_velo_fb_zoom.set_ylabel("max_velocity")
+plot_velo_fb_zoom.set_xlim(-500, 20000)
+plot_velo_fb_zoom.set_ylim(-250, 4000)
+fig_velo_fb_zoom = plot_velo_fb_zoom.get_figure()
+fig_velo_fb_zoom.savefig("Max_Velocity_vs_FB_Engagement_zoom.png")
 # plt.xlim(100,200)
 # plt.show()
 
-ARTICLES_WITH_FB_max_velo_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['publication_timestamp'] > 1.45e12]
-ARTICLES_WITH_FB_fb_engagement_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['publication_timestamp'] > 1.45e12]
+ARTICLES_WITH_FB_max_velo_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['max_velocity'] > 0]
+ARTICLES_WITH_FB_fb_engagement_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['total_engagement_count'] > 0]
 
 time_plot_velo = sns.scatterplot(x=ARTICLES_WITH_FB_max_velo_valid['publication_timestamp'], y=ARTICLES_WITH_FB_max_velo_valid['max_velocity'])
 time_plot_velo.set_title("Max Velocity Over Time")
 time_plot_velo.set_xlabel("time")
-time_plot_velo.set_xlim(1.47e12,1.57e12)
+# time_plot_velo.set_xlim(1.47e12, 1.57e12)
 time_plot_velo.set_ylabel("Max Velocity")
 time_figure_velo = time_plot_velo.get_figure()
 time_figure_velo.savefig("Max_Velocity_vs_time.png")
@@ -65,10 +81,29 @@ time_figure_velo.savefig("Max_Velocity_vs_time.png")
 time_plot_fb = sns.scatterplot(x=ARTICLES_WITH_FB_fb_engagement_valid['publication_timestamp'], y=ARTICLES_WITH_FB_fb_engagement_valid['total_engagement_count'])
 time_plot_fb.set_title("FB Engagement Over Time")
 time_plot_fb.set_xlabel("time")
-time_plot_fb.set_xlim(1.47e12,1.57e12)
+# time_plot_fb.set_xlim(1.47e12, 1.57e12)
 time_plot_fb.set_ylabel("FB Engagement")
 time_figure_fb = time_plot_fb.get_figure()
 time_figure_fb.savefig("FB_Engagement_vs_time.png")
+
+time_plot_velo_zoom = sns.scatterplot(x=ARTICLES_WITH_FB_max_velo_valid['publication_timestamp'], y=ARTICLES_WITH_FB_max_velo_valid['max_velocity'])
+time_plot_velo_zoom.set_title("Max Velocity Over Time (Below 4000)")
+time_plot_velo_zoom.set_xlabel("time")
+# time_plot_velo.set_xlim(1.47e12, 1.57e12)
+time_plot_velo_zoom.set_ylim(-100 , 4000)
+time_plot_velo_zoom.set_xlabel("time")
+time_plot_velo_zoom.set_ylabel("Max Velocity")
+time_figure_velo_zoom = time_plot_velo_zoom.get_figure()
+time_figure_velo_zoom.savefig("Max_Velocity_vs_time_Below_4k.png")
+
+time_plot_fb_zoom = sns.scatterplot(x=ARTICLES_WITH_FB_fb_engagement_valid['publication_timestamp'], y=ARTICLES_WITH_FB_fb_engagement_valid['total_engagement_count'])
+time_plot_fb_zoom.set_title("FB Engagement Over Time (Below 200000)")
+time_plot_fb_zoom.set_xlabel("time")
+time_plot_fb_zoom.set_xlim(1.47e12, 1.57e12)
+time_plot_fb_zoom.set_ylim(-1000, 200000)
+time_plot_fb_zoom.set_ylabel("FB Engagement")
+time_figure_fb_zoom = time_plot_fb_zoom.get_figure()
+time_figure_fb_zoom.savefig("FB_Engagement_vs_time_below_20k.png")
 
 
 def pre_process(text):
