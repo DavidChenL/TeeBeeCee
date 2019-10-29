@@ -1,3 +1,6 @@
+"""
+Preprocess and visualisation
+"""
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -17,14 +20,6 @@ pd.set_option('display.max_colwidth', -1)
 sns.set(style='darkgrid')
 
 ARTICLES = pd.read_json("dataset/articles.json")
-# TWITTER_INFLUENCERS = pd.read_json("dataset/twitter_influencers.json")
-# TWEETS = pd.read_json("dataset/tweets.json")
-
-# Convert time
-# print(time.ctime(ARTICLES['publication_timestamp']))
-# print(datetime.utcfromtimestamp(ARTICLES['publication_day']))
-# print(datetime.utcfromtimestamp(ARTICLES['publication_timestamp']).strftime('%Y-%m-%d'))
-# ARTICLES['publication_day'] = datetime.utcfromtimestamp(ARTICLES['publication_timestamp'].astype(int)).strftime('%Y-%m-%d').astype(str)
 
 print("ARTICLES.shape: ", ARTICLES.shape)
 # print(TWEETS.head())
@@ -47,8 +42,8 @@ ARTICLES_WITH_FB = ARTICLES.join(fb_df)
 ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus = ARTICLES_WITH_FB[(ARTICLES_WITH_FB['total_engagement_count'] > 100) | (ARTICLES_WITH_FB['velocity'] > 0.05)]
 print(ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus.shape)
 
-# TODO: delete ZERO VALUES of max velocity, engagement and publication_timestamp
 
+# Visualisation
 plot_velo_fb = sns.scatterplot(x=ARTICLES_WITH_FB['total_engagement_count'], y=ARTICLES_WITH_FB['max_velocity'])
 plot_velo_fb.set_title("Max Velocity and FB Engagement")
 plot_velo_fb.set_xlabel("total_engagement_count")
@@ -64,8 +59,6 @@ plot_velo_fb_zoom.set_xlim(-500, 20000)
 plot_velo_fb_zoom.set_ylim(-250, 4000)
 fig_velo_fb_zoom = plot_velo_fb_zoom.get_figure()
 fig_velo_fb_zoom.savefig("Max_Velocity_vs_FB_Engagement_zoom.png")
-# plt.xlim(100,200)
-# plt.show()
 
 ARTICLES_WITH_FB_max_velo_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['max_velocity'] > 0]
 ARTICLES_WITH_FB_fb_engagement_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus[ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus['total_engagement_count'] > 0]
