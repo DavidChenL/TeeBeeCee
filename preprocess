@@ -45,7 +45,7 @@ ARTICLES_WITH_FB = ARTICLES.join(fb_df)
 
 # Select fb engagement > 100 OR max velocity > 0.05
 ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus = ARTICLES_WITH_FB[(ARTICLES_WITH_FB['total_engagement_count'] > 100) | (ARTICLES_WITH_FB['velocity'] > 0.05)]
-# print(ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus.shape)
+print(ARTICLES_WITH_FB_max_velo_zero_five_plus_OR_fb_one_hundred_plus.shape)
 
 # TODO: delete ZERO VALUES of max velocity, engagement and publication_timestamp
 
@@ -73,7 +73,7 @@ ARTICLES_WITH_FB_fb_engagement_valid = ARTICLES_WITH_FB_max_velo_zero_five_plus_
 time_plot_velo = sns.scatterplot(x=ARTICLES_WITH_FB_max_velo_valid['publication_timestamp'], y=ARTICLES_WITH_FB_max_velo_valid['max_velocity'])
 time_plot_velo.set_title("Max Velocity Over Time")
 time_plot_velo.set_xlabel("time")
-# time_plot_velo.set_xlim(1.47e12, 1.57e12)
+time_plot_velo.set_xlim(1.47e12, 1.57e12)
 time_plot_velo.set_ylabel("Max Velocity")
 time_figure_velo = time_plot_velo.get_figure()
 time_figure_velo.savefig("Max_Velocity_vs_time.png")
@@ -81,7 +81,7 @@ time_figure_velo.savefig("Max_Velocity_vs_time.png")
 time_plot_fb = sns.scatterplot(x=ARTICLES_WITH_FB_fb_engagement_valid['publication_timestamp'], y=ARTICLES_WITH_FB_fb_engagement_valid['total_engagement_count'])
 time_plot_fb.set_title("FB Engagement Over Time")
 time_plot_fb.set_xlabel("time")
-# time_plot_fb.set_xlim(1.47e12, 1.57e12)
+time_plot_fb.set_xlim(1.47e12, 1.57e12)
 time_plot_fb.set_ylabel("FB Engagement")
 time_figure_fb = time_plot_fb.get_figure()
 time_figure_fb.savefig("FB_Engagement_vs_time.png")
@@ -89,7 +89,7 @@ time_figure_fb.savefig("FB_Engagement_vs_time.png")
 time_plot_velo_zoom = sns.scatterplot(x=ARTICLES_WITH_FB_max_velo_valid['publication_timestamp'], y=ARTICLES_WITH_FB_max_velo_valid['max_velocity'])
 time_plot_velo_zoom.set_title("Max Velocity Over Time (Below 4000)")
 time_plot_velo_zoom.set_xlabel("time")
-# time_plot_velo.set_xlim(1.47e12, 1.57e12)
+time_plot_velo_zoom.set_xlim(1.47e12, 1.57e12)
 time_plot_velo_zoom.set_ylim(-100 , 4000)
 time_plot_velo_zoom.set_xlabel("time")
 time_plot_velo_zoom.set_ylabel("Max Velocity")
